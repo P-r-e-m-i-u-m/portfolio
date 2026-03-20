@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Instrument+Serif:ital@1&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Instrument Serif', serif;
+  --font-body: 'Barlow', sans-serif;
+  
+  --radius-full: 9999px;
+  
+  --color-background: hsl(213 45% 67%);
+  --color-foreground: hsl(0 0% 100%);
+  --color-primary: hsl(0 0% 100%);
+  --color-primary-foreground: hsl(213 45% 67%);
+  --color-border: hsla(0, 0%, 100%, 0.2);
+}
+
+:root {
+  --background: 213 45% 67%;
+  --foreground: 0 0% 100%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 213 45% 67%;
+  --border: 0 0% 100% / 0.2;
+  --radius: 9999px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-black text-foreground antialiased selection:bg-white selection:text-black;
+  }
+}
+
+@utility liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+      rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+      rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@utility liquid-glass-strong {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(50px);
+  border: none;
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 20%,
+      rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+      rgba(255,255,255,0.2) 80%, rgba(255,255,255,0.5) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@utility section-badge {
+  @apply liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white font-body inline-block mb-4;
+}
+
+@utility heading-primary {
+  @apply font-heading italic text-white tracking-tight leading-[0.9];
+}
+
+@utility body-text {
+  @apply font-body font-light text-white/60 text-sm;
+}
+
+@utility btn-rounded {
+  @apply font-body rounded-full transition-all duration-300;
+}
+
+
