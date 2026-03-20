@@ -1,3 +1,4 @@
+import RotatingText from './components/RotatingText';
 import Dock from './components/Dock';
 import ClickSpark from './components/ClickSpark';
 import React, { useEffect, useRef, useState } from 'react';
@@ -75,7 +76,7 @@ useEffect(() => {
           <div className="max-w-screen-xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 liquid-glass-strong rounded-full flex items-center justify-center border border-white/20">
-                <span className="font-heading text-lg italic">S</span>
+                <span className="font-heading text-lg italic">SA</span>
               </div>
               <span className="font-body text-xs font-medium tracking-widest hidden md:flex items-center gap-2">
   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
@@ -135,8 +136,22 @@ useEffect(() => {
             </motion.div>
             <div className="mb-8">
               <BlurText text="ꜱʏᴇᴅ ᴀʙᴅᴜʟ ᴀᴍᴀɴ" delay={200} animateBy="words" direction="top" className="text-6xl md:text-8xl lg:text-[7rem] font-heading italic text-white tracking-[-4px] leading-[0.8] mb-4" />
-              <motion.div initial={{ opacity: 0, filter: 'blur(10px)' }} animate={{ opacity: 1, filter: 'blur(0px)' }} transition={{ delay: 0.6, duration: 1 }} className="font-heading italic text-3xl md:text-4xl text-white/60 mb-8">
-                Data Analyst & GenAI Developer
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 1 }} className="flex items-center justify-center gap-3 mb-8">
+<motion.div initial={{ opacity: 0, filter: 'blur(10px)' }} animate={{ opacity: 1, filter: 'blur(0px)' }} transition={{ delay: 0.6, duration: 1 }} className="flex items-center justify-center gap-3 mb-8">
+  <span className="font-heading italic text-3xl md:text-4xl text-white/60">I am a</span>
+  <RotatingText
+    texts={['Data Analyst', 'GenAI Developer', 'Python Developer', 'AI Builder']}
+    mainClassName="px-3 py-1 liquid-glass text-white overflow-hidden rounded-lg font-bold not-italic text-2xl md:text-3xl"
+    staggerFrom="last"
+    initial={{ y: "100%" }}
+    animate={{ y: 0 }}
+    exit={{ y: "-120%" }}
+    staggerDuration={0.025}
+    splitLevelClassName="overflow-hidden pb-0.5"
+    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+    rotationInterval={2000}
+  />
+</motion.div>
               </motion.div>
             </div>
             <motion.p initial={{ opacity: 0, filter: 'blur(10px)' }} animate={{ opacity: 1, filter: 'blur(0px)' }} transition={{ delay: 0.8, duration: 0.8 }} className="text-white/60 font-body font-light text-lg md:text-xl max-w-2xl mb-12 leading-relaxed">
