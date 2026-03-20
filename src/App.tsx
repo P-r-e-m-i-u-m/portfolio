@@ -77,7 +77,10 @@ useEffect(() => {
               <div className="w-10 h-10 liquid-glass-strong rounded-full flex items-center justify-center border border-white/20">
                 <span className="font-heading text-lg italic">S</span>
               </div>
-              <span className="font-heading italic text-xl tracking-tight hidden md:block">ꜱʏᴇᴅ ᴀʙᴅᴜʟ ᴀᴍᴀɴ</span>
+              <span className="font-body text-xs font-medium tracking-widest hidden md:flex items-center gap-2">
+  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+  AVAILABLE FOR WORK
+</span>
             </div>
             <div className="liquid-glass px-6 py-2.5 rounded-full backdrop-blur-md flex items-center gap-8">
               <a href="#home" className="text-sm font-body font-medium text-white/70 hover:text-white transition-colors">Home</a>
