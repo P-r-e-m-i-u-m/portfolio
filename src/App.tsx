@@ -1,433 +1,252 @@
-import RotatingText from './components/RotatingText';
-import Dock from './components/Dock';
-import ClickSpark from './components/ClickSpark';
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Play, Database, Brain, Code, ChevronDown, Mail, Phone, Linkedin, ExternalLink, Award, Terminal, Github } from 'lucide-react';
-import Hls from 'hls.js';
-import BlurText from './components/BlurText';
+import { ArrowDown, ArrowRight, ArrowUpRight, Github, Linkedin, Mail, Menu, X, Code2, BrainCircuit, Database, Workflow, Terminal, Sparkles, GitPullRequest, ExternalLink } from "lucide-react";
+import { useState } from "react";
 
-const HlsVideo = ({ src, className, style, desaturated = false }: { src: string; className?: string; style?: React.CSSProperties; desaturated?: boolean }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(src);
-      hls.attachMedia(video);
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = src;
-    }
-  }, [src]);
-  return <video ref={videoRef} className={className} style={{ ...style, filter: desaturated ? 'saturate(0)' : 'none' }} autoPlay loop muted playsInline />;
-};
+const projects = [
+  {
+    name: "RepoDoctor",
+    category: "Developer tooling",
+    status: "Early development",
+    description: "A local-first Go CLI that connects terminal failures to the project files and configuration that can explain them. It offers practical next steps while keeping the developer in control.",
+    stack: ["Go", "CLI", "Diagnostics", "Testing"],
+    href: "https://github.com/P-r-e-m-i-u-m/RepoDoctor",
+    number: "01",
+  },
+  {
+    name: "Worktrail",
+    category: "Developer productivity",
+    status: "Open source",
+    description: "A local-first CLI for saving work sessions, Git context, notes, and next steps so developers can return to a project without rebuilding the whole thread.",
+    stack: ["Python", "CLI", "Git", "JSON"],
+    href: "https://github.com/P-r-e-m-i-u-m/worktrail",
+    number: "02",
+  },
+  {
+    name: "Open Source Starter Lab",
+    category: "Open-source community",
+    status: "Maintained in public",
+    description: "A beginner-friendly contribution lab with scoped issues, clear acceptance criteria, CI checks, and a path from a first issue to a first clean merge.",
+    stack: ["JavaScript", "GitHub Actions", "Automation", "Docs"],
+    href: "https://github.com/P-r-e-m-i-u-m/open-source-starter-lab",
+    number: "03",
+  },
+  {
+    name: "OpenAI-compatible API Gateway",
+    category: "AI infrastructure",
+    status: "Open source",
+    description: "A self-hosted gateway for routing OpenAI-compatible traffic across providers, with model-based routing, streaming, retries, health checks, and metrics.",
+    stack: ["TypeScript", "Node.js", "Docker", "APIs"],
+    href: "https://github.com/P-r-e-m-i-u-m/PROXY",
+    number: "04",
+  },
+  {
+    name: "AI Coding Assistant",
+    category: "Applied AI",
+    status: "Prototype",
+    description: "A Qwen-powered coding and learning assistant exploring streamed responses, chat history, code explanations, and lightweight personalization.",
+    stack: ["Next.js", "TypeScript", "Qwen", "Streaming"],
+    href: "https://github.com/P-r-e-m-i-u-m/humanAI",
+    number: "05",
+  },
+];
 
-const SkillAccordion = ({ title, children, icon: Icon }: { title: string; children: React.ReactNode; icon: any }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className="border-b border-white/10 last:border-0">
-      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between py-6 group hover:text-white transition-colors">
-        <div className="flex items-center gap-4">
-          <div className="liquid-glass-strong w-10 h-10 flex items-center justify-center rounded-full">
-            <Icon className="w-5 h-5 text-white/80" />
-          </div>
-          <span className="font-heading italic text-2xl md:text-3xl text-white/70 group-hover:text-white transition-colors">{title}</span>
-        </div>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}>
-          <ChevronDown className="w-6 h-6 text-white/40" />
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="overflow-hidden">
-            <div className="pb-8 text-white/60 font-body font-light text-base leading-relaxed pl-14">{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+const capabilities = [
+  {
+    icon: BrainCircuit,
+    title: "Applied AI",
+    description: "LLM applications, retrieval-augmented generation, prompt design, model APIs, and agent workflows.",
+    tags: ["LLMs", "RAG", "AI APIs", "Agents"],
+  },
+  {
+    icon: Code2,
+    title: "Python engineering",
+    description: "Practical application code, API integrations, automation, data processing, and backend services.",
+    tags: ["Python", "FastAPI", "Flask", "Testing"],
+  },
+  {
+    icon: Database,
+    title: "Data systems",
+    description: "Turning raw data into dependable datasets, useful analysis, and clear reporting.",
+    tags: ["SQL", "ETL", "Excel", "Analytics"],
+  },
+  {
+    icon: Workflow,
+    title: "Engineering practice",
+    description: "Building in public, writing useful documentation, shipping focused changes, and improving developer workflows.",
+    tags: ["Git", "Docker", "CI/CD", "Open source"],
+  },
+];
+
+const principles = [
+  ["Start with the problem", "Choose the simplest approach that solves the real need."],
+  ["Make the work inspectable", "Prefer clear interfaces, useful tests, and documentation that helps the next developer."],
+  ["Keep humans in control", "AI should make a workflow more useful, not make it harder to understand."],
+];
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <p className="section-label"><span />{children}</p>;
+}
 
 export default function App() {
-const [activePillar, setActivePillar] = useState<'Data' | 'AI'>('Data');  
-const [muted, setMuted] = useState(true);
-const [started, setStarted] = useState(false);
-const audioRef = useRef<HTMLAudioElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-useEffect(() => {
-  const handleFirstClick = () => {
-    if (!started && audioRef.current) {
-      audioRef.current.play();
-      setStarted(true);
-    }
-  };
-  window.addEventListener('click', handleFirstClick, { once: true });
-  return () => window.removeEventListener('click', handleFirstClick);
-}, [started]);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <ClickSpark sparkColor='#fff' sparkSize={12} sparkRadius={25} sparkCount={10} duration={300}>
-      <div className="bg-black min-h-screen text-white selection:bg-white selection:text-black overflow-x-hidden">
-        <audio ref={audioRef} src="/song.mp3" loop />
+    <main>
+      <a className="skip-link" href="#main-content">Skip to content</a>
 
-        {/* NAVBAR */}
-        <nav className="fixed top-6 left-0 right-0 z-[100] px-6">
-          <div className="max-w-screen-xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 liquid-glass-strong rounded-full flex items-center justify-center border border-white/20">
-                <span className="font-heading text-lg italic">SA</span>
-              </div>
-              <span className="font-body text-xs font-medium tracking-widest hidden md:flex items-center gap-2">
-  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-  AVAILABLE FOR WORK
-</span>
-            </div>
-            <div className="liquid-glass px-6 py-2.5 rounded-full backdrop-blur-md flex items-center gap-8">
-              <a href="#home" className="text-sm font-body font-medium text-white/70 hover:text-white transition-colors">Home</a>
-              <a href="#about" className="text-sm font-body font-medium text-white/70 hover:text-white transition-colors">About</a>
-              <a href="#skills" className="text-sm font-body font-medium text-white/70 hover:text-white transition-colors">Skills</a>
-              <a href="#projects" className="text-sm font-body font-medium text-white/70 hover:text-white transition-colors">Projects</a>
-              <a href="#certifications" className="text-sm font-body font-medium text-white/70 hover:text-white transition-colors">Certs</a>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => {
-                  const audio = audioRef.current;
-                  if (!audio) return;
-                  if (muted) {
-                    audio.muted = false;
-                    audio.play().catch(() => {});
-                    setMuted(false);
-                    } else {
-                      audio.muted = true;
-                      audio.pause();
-                      setMuted(true);
-                      }
-                      }}
-                  
-                className="liquid-glass w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-colors text-lg"
-              >
-                {muted ? '🔇' : '🔊'}
-              </button>
-              <a
-                href="#contact"
-                className="relative text-sm font-medium rounded-full h-10 pl-6 pr-14 group transition-all duration-500 hover:pl-14 hover:pr-6 overflow-hidden cursor-pointer bg-white text-black flex items-center"
-              >
-                <span className="relative z-10 transition-all duration-500">Get In Touch</span>
-                <div className="absolute right-1 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center transition-all duration-500 group-hover:right-[calc(100%-36px)] group-hover:rotate-45">
-                  <ArrowUpRight size={14} />
-                </div>
-              </a>
-            </div>
-          </div>
+      <header className="site-header">
+        <a className="brand" href="#home" aria-label="Syed Abdul Aman, home" onClick={closeMenu}>
+          <span className="brand-mark">A.</span>
+          <span className="brand-name">Syed Abdul Aman<span className="brand-dot">.</span></span>
+        </a>
+
+        <button className="menu-toggle" type="button" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+
+        <nav className={menuOpen ? "main-nav is-open" : "main-nav"} aria-label="Main navigation">
+          <a href="#work" onClick={closeMenu}>Selected work</a>
+          <a href="#about" onClick={closeMenu}>About</a>
+          <a href="#capabilities" onClick={closeMenu}>Capabilities</a>
+          <a href="#open-source" onClick={closeMenu}>Open source</a>
+          <a className="nav-contact" href="#contact" onClick={closeMenu}>Get in touch <ArrowUpRight size={14} /></a>
         </nav>
-        {/* HERO SECTION */}
-        <section id="home" className="relative h-[1000px] flex items-start justify-center pt-[200px] px-6 overflow-hidden bg-black">
-          <div className="absolute top-[15%] left-0 w-full h-auto z-0 opacity-40">
-            <video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" autoPlay loop muted playsInline className="w-full h-auto object-contain" />
-          </div>
-          <div className="absolute inset-0 bg-black/10 z-0 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-t from-black via-black/80 to-transparent z-[1]" />
-          <div className="relative z-10 max-w-4xl text-center flex flex-col items-center">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="liquid-glass rounded-full px-4 py-1.5 mb-8 flex items-center gap-2">
-              <span className="bg-white text-black text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">New</span>
-              <span className="text-xs font-body font-medium text-white/80">Data Analyst & Generative AI Developer</span>
-            </motion.div>
-            <div className="mb-8">
-              <BlurText text="ꜱʏᴇᴅ ᴀʙᴅᴜʟ ᴀᴍᴀɴ" delay={200} animateBy="words" direction="top" className="text-6xl md:text-8xl lg:text-[7rem] font-heading italic text-white tracking-[-4px] leading-[0.8] mb-4" />
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 1 }} className="flex items-center justify-center gap-3 mb-8">
-<motion.div initial={{ opacity: 0, filter: 'blur(10px)' }} animate={{ opacity: 1, filter: 'blur(0px)' }} transition={{ delay: 0.6, duration: 1 }} className="flex items-center justify-center gap-3 mb-8">
-  <span className="font-heading italic text-3xl md:text-4xl text-white/60">I am a</span>
-  <RotatingText
-    texts={['Data Analyst', 'GenAI Developer', 'Python Developer', 'AI Builder']}
-    mainClassName="px-3 py-1 liquid-glass text-white overflow-hidden rounded-lg font-bold not-italic text-2xl md:text-3xl"
-    staggerFrom="last"
-    initial={{ y: "100%" }}
-    animate={{ y: 0 }}
-    exit={{ y: "-120%" }}
-    staggerDuration={0.025}
-    splitLevelClassName="overflow-hidden pb-0.5"
-    transition={{ type: "spring", damping: 30, stiffness: 400 }}
-    rotationInterval={2000}
-  />
-</motion.div>
-              </motion.div>
-            </div>
-            <motion.p initial={{ opacity: 0, filter: 'blur(10px)' }} animate={{ opacity: 1, filter: 'blur(0px)' }} transition={{ delay: 0.8, duration: 0.8 }} className="text-white/60 font-body font-light text-lg md:text-xl max-w-2xl mb-12 leading-relaxed">
-              I transform raw data into clear, actionable insights and build AI-driven tools that automate workflows, augment decision-making, and create real business impact.
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 0.8 }} className="flex flex-col sm:flex-row items-center gap-4">
-              <a href="#projects" className="liquid-glass-strong px-8 py-4 rounded-full font-body font-medium text-sm flex items-center gap-2 group transition-all hover:scale-105 active:scale-95">
-                View Projects <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </a>
-              <a href="#about" className="text-white/60 hover:text-white font-body font-medium text-sm flex items-center gap-2 transition-all px-8 py-4">
-                Explore Skills <Play className="w-4 h-4 fill-current" />
-              </a>
-            </motion.div>
-          </div>
-          <div className="absolute bottom-16 left-0 right-0 z-10 flex flex-col items-center gap-6 px-6">
-            <div className="liquid-glass px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold text-white/40">Core pillars</div>
-            <div className="flex items-center gap-12 md:gap-24">
-              <div className="flex flex-col items-center gap-1">
-                <span className="font-heading italic text-4xl md:text-6xl text-white/80">Data</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span className="font-heading italic text-4xl md:text-6xl text-white/80">AI</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-              </div>
-            </div>
-          </div>
-        </section>
+      </header>
 
-        {/* ABOUT ME SECTION */}
-        <section id="about" className="relative py-32 px-6 overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <HlsVideo src="https://stream.mux.com/9JXDljEVWYwWu01PUkAemafDugK89o01BR6zqJ3aS9u00A.m3u8" className="w-full h-full object-cover opacity-30" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+      <section className="hero" id="home" aria-labelledby="hero-title">
+        <div className="hero-orbit hero-orbit-one" />
+        <div className="hero-orbit hero-orbit-two" />
+        <div className="hero-grid" />
+        <div className="hero-content" id="main-content">
+          <SectionLabel>Independent developer · Building in public</SectionLabel>
+          <h1 id="hero-title">I build useful things<br /><em>with AI and code.</em></h1>
+          <p className="hero-copy">I'm Syed Abdul Aman, an independent developer focused on applied AI, Python engineering, and open-source tools. I like turning rough ideas into practical software people can inspect, use, and improve.</p>
+          <div className="hero-actions">
+            <a className="button button-primary" href="#work">Explore selected work <ArrowUpRight size={16} /></a>
+            <a className="button button-quiet" href="https://github.com/P-r-e-m-i-u-m" target="_blank" rel="noreferrer">GitHub profile <Github size={16} /></a>
           </div>
-          <div className="relative z-10 max-w-screen-xl mx-auto grid lg:grid-cols-2 gap-24 items-start">
+          <div className="hero-footnote"><span className="status-dot" /> Open to thoughtful collaborations and remote opportunities</div>
+        </div>
+        <div className="hero-aside" aria-label="Areas of focus">
+          <span className="aside-kicker">CURRENT FOCUS</span>
+          <div className="focus-line"><span>01</span> Applied AI systems</div>
+          <div className="focus-line"><span>02</span> Python & developer tools</div>
+          <div className="focus-line"><span>03</span> Open-source software</div>
+          <div className="aside-note">Build carefully.<br />Share what works.</div>
+        </div>
+        <a className="scroll-cue" href="#work"><span>SCROLL TO EXPLORE</span><ArrowDown size={14} /></a>
+      </section>
+
+      <section className="work-section section-wrap" id="work">
+        <div className="section-heading">
+          <div>
+            <SectionLabel>Selected work</SectionLabel>
+            <h2>Projects with a<br /><em>purpose behind them.</em></h2>
+          </div>
+          <p className="section-intro">A few things I've been building and maintaining. Each card links to its source so you can explore the implementation, decisions, and current state.</p>
+        </div>
+
+        <div className="project-list">
+          {projects.map((project) => (
+            <a className="project-card" href={project.href} target="_blank" rel="noreferrer" key={project.number}>
+              <span className="project-number">{project.number}</span>
+              <div className="project-main">
+                <div className="project-meta"><span>{project.category}</span><span className="project-status">{project.status}</span></div>
+                <h3>{project.name}</h3>
+                <p>{project.description}</p>
+                <div className="tag-list">{project.stack.map((item) => <span key={item}>{item}</span>)}</div>
+              </div>
+              <span className="project-arrow" aria-hidden="true"><ArrowUpRight size={21} /></span>
+            </a>
+          ))}
+        </div>
+        <div className="all-work-link"><a href="https://github.com/P-r-e-m-i-u-m?tab=repositories" target="_blank" rel="noreferrer">Browse all public repositories <ArrowUpRight size={15} /></a></div>
+      </section>
+
+      <section className="about-section" id="about">
+        <div className="section-wrap about-grid">
+          <div className="about-heading">
+            <SectionLabel>A little about how I work</SectionLabel>
+            <h2>Curiosity first.<br /><em>Useful software next.</em></h2>
+          </div>
+          <div className="about-copy">
+            <p className="about-lede">I learn by building, testing, reading other people's code, and contributing in the open.</p>
+            <p>My work sits around the practical side of AI engineering: connecting models to real workflows, building the APIs and tools around them, and making sure the result is understandable and maintainable. I also enjoy developer tooling and the small details that make open-source projects easier to use.</p>
+            <p>I'm self-taught and continuing my formal learning journey. I care more about showing the work clearly than making big claims about it.</p>
+            <a className="text-link" href="https://www.linkedin.com/in/syedabdul-aman-genai-developer/" target="_blank" rel="noreferrer">More about my journey on LinkedIn <ArrowUpRight size={15} /></a>
+          </div>
+        </div>
+        <div className="principles section-wrap">
+          {principles.map(([title, description], index) => (
+            <div className="principle" key={title}>
+              <span>0{index + 1}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="capabilities-section section-wrap" id="capabilities">
+        <div className="section-heading">
+          <div>
+            <SectionLabel>What I work with</SectionLabel>
+            <h2>Tools are useful.<br /><em>Judgement matters more.</em></h2>
+          </div>
+          <p className="section-intro">A practical toolkit that keeps evolving through projects, experiments, and open-source work.</p>
+        </div>
+        <div className="capability-grid">
+          {capabilities.map(({ icon: Icon, title, description, tags }, index) => (
+            <article className="capability-card" key={title}>
+              <div className="capability-top"><span>0{index + 1}</span><Icon size={22} strokeWidth={1.5} /></div>
+              <h3>{title}</h3>
+              <p>{description}</p>
+              <div className="tag-list">{tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="open-source-section" id="open-source">
+        <div className="section-wrap open-source-inner">
+          <div className="oss-icon"><GitPullRequest size={25} /></div>
+          <div className="oss-copy">
+            <SectionLabel>Open source</SectionLabel>
+            <h2>Good software gets<br /><em>better in the open.</em></h2>
+            <p>I maintain and contribute to projects that make it easier for developers to learn, build, and collaborate. Open Source Starter Lab is one way I try to make a first contribution feel less intimidating and more practical.</p>
+            <a className="button button-primary" href="https://github.com/P-r-e-m-i-u-m/open-source-starter-lab" target="_blank" rel="noreferrer">Visit the community project <ArrowUpRight size={16} /></a>
+          </div>
+          <div className="oss-aside">
+            <span className="aside-kicker">MY APPROACH</span>
+            <p>Small, reviewable changes.</p>
+            <p>Clear issues and documentation.</p>
+            <p>Respect for contributors' time.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer className="site-footer" id="contact">
+        <div className="section-wrap footer-inner">
+          <div className="footer-top">
             <div>
-              <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white font-body inline-block mb-8">About Me</div>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-heading italic text-white tracking-tight leading-[0.9] mb-12">Transforming raw data <br/> into intelligent systems.</h2>
-              <div className="space-y-8 text-white/60 font-body font-light text-lg leading-relaxed max-w-xl">
-                <p>I am a Data Analyst & Generative AI Developer focused on transforming data into meaningful insights and building intelligent systems that support better decisions.</p>
-                <p>I design AI-driven solutions that automate insight generation, streamline workflows, and increase the reliability of everyday operations.</p>
-              </div>
+              <SectionLabel>Have something worth building?</SectionLabel>
+              <h2>Let's make it<br /><em>work in the real world.</em></h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="liquid-glass-strong rounded-3xl p-8 backdrop-blur-2xl">
-                <div className="w-10 h-10 liquid-glass rounded-full flex items-center justify-center mb-6"><Brain className="w-5 h-5 text-white" /></div>
-                <h3 className="font-heading italic text-2xl text-white mb-4">How I think</h3>
-                <ul className="space-y-4 text-sm text-white/50 font-body font-light">
-                  <li>• Start with the problem, not the model.</li>
-                  <li>• Design for clarity, reliability, and maintainability.</li>
-                  <li>• Blend analytics, automation, and good UX.</li>
-                </ul>
-              </div>
-              <div className="liquid-glass-strong rounded-3xl p-8 backdrop-blur-2xl">
-                <div className="w-10 h-10 liquid-glass rounded-full flex items-center justify-center mb-6"><Terminal className="w-5 h-5 text-white" /></div>
-                <h3 className="font-heading italic text-2xl text-white mb-4">What I build</h3>
-                <ul className="space-y-4 text-sm text-white/50 font-body font-light">
-                  <li>• Data pipelines from raw sources to clean, trusted tables.</li>
-                  <li>• Dashboards that tell a clear story.</li>
-                  <li>• AI copilots that plug directly into workflows.</li>
-                </ul>
-              </div>
-              <div className="lg:col-span-2 liquid-glass rounded-3xl p-10 mt-6 overflow-hidden relative">
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                  <div>
-                    <h4 className="font-heading italic text-3xl text-white mb-2">Looking for</h4>
-                    <p className="text-white/50 font-body font-light max-w-md">Opportunities to build AI-powered dashboards, assistants, and automations that make teams faster.</p>
-                  </div>
-                  <a href="#contact" className="bg-white text-black px-8 py-3 rounded-full font-body font-medium text-sm inline-flex items-center gap-2 hover:scale-105 transition-transform shrink-0">
-                    Let's Connect <ArrowUpRight className="w-4 h-4" />
-                  </a>
-                </div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
-              </div>
-            </div>
+            <a className="footer-email" href="mailto:amanbaba9404522@gmail.com">amanbaba9404522@gmail.com <ArrowUpRight size={18} /></a>
           </div>
-        </section>
-
-        {/* SKILLS SECTION */}
-        <section id="skills" className="py-32 px-6">
-          <div className="max-w-screen-xl mx-auto">
-            <div className="mb-24">
-              <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white font-body inline-block mb-4">Capabilities</div>
-              <h2 className="text-5xl md:text-6xl font-heading italic text-white tracking-tight leading-[0.9]">Core Proficiencies <br/> & Technical Pillars.</h2>
+          <div className="footer-bottom">
+            <a className="footer-brand" href="#home">A<span>.</span></a>
+            <p>Independent developer focused on AI, Python, and open source.</p>
+            <div className="social-links">
+              <a href="https://github.com/P-r-e-m-i-u-m" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} /></a>
+              <a href="https://www.linkedin.com/in/syedabdul-aman-genai-developer/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} /></a>
+              <a href="mailto:amanbaba9404522@gmail.com" aria-label="Email"><Mail size={18} /></a>
             </div>
-            <div className="grid lg:grid-cols-2 gap-24">
-              <div className="space-y-2">
-                <SkillAccordion title="Data Analysis" icon={Database}>
-                  <ul className="space-y-4">
-                    <li>• Advanced Excel modeling and scenario analysis.</li>
-                    <li>• Data cleaning and preparation for analytics.</li>
-                    <li>• Visualization with Tableau, Power BI, and Matplotlib.</li>
-                    <li>• Python (Pandas, NumPy) for exploratory data analysis.</li>
-                    <li>• Statistical analysis for trends and significance.</li>
-                  </ul>
-                </SkillAccordion>
-                <SkillAccordion title="Generative AI" icon={Brain}>
-                  <ul className="space-y-4">
-                    <li>• LLM-powered tool development and prompt engineering.</li>
-                    <li>• RAG (Retrieval-Augmented Generation) systems.</li>
-                    <li>• Integration of AI APIs (OpenAI, Anthropic, Gemini).</li>
-                    <li>• Building AI-first workflows and intelligent agents.</li>
-                  </ul>
-                </SkillAccordion>
-                <SkillAccordion title="Python Development" icon={Code}>
-                  <ul className="space-y-4">
-                    <li>• Backend development with FastAPI and Flask.</li>
-                    <li>• Automation scripts and task scheduling.</li>
-                    <li>• API integrations and data collection pipelines.</li>
-                    <li>• Practical Machine Learning implementation.</li>
-                  </ul>
-                </SkillAccordion>
-                <SkillAccordion title="Data Engineering" icon={Terminal}>
-                  <ul className="space-y-4">
-                    <li>• Designing ETL pipelines for trusted data.</li>
-                    <li>• SQL for complex joins, aggregations, and reporting.</li>
-                    <li>• Managing cloud-based datasets (BigQuery, Snowflake).</li>
-                  </ul>
-                </SkillAccordion>
-              </div>
-              <div>
-                <div className="liquid-glass-strong rounded-3xl p-1 w-full flex mb-12">
-                  <button onClick={() => setActivePillar('Data')} className={`flex-1 py-4 rounded-[22px] transition-all font-body font-medium text-sm ${activePillar === 'Data' ? 'bg-white text-black' : 'text-white/60 hover:text-white'}`}>Data Pillar</button>
-                  <button onClick={() => setActivePillar('AI')} className={`flex-1 py-4 rounded-[22px] transition-all font-body font-medium text-sm ${activePillar === 'AI' ? 'bg-white text-black' : 'text-white/60 hover:text-white'}`}>AI Pillar</button>
-                </div>
-                <div className="liquid-glass rounded-3xl p-10 min-h-[400px] flex flex-col justify-center text-center">
-                  <AnimatePresence mode="wait">
-                    <motion.div key={activePillar} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }}>
-                      <h3 className="font-heading italic text-6xl text-white mb-8">{activePillar === 'Data' ? 'Signal over noise.' : 'Reasoning over logic.'}</h3>
-                      <p className="text-white/50 font-body font-light text-lg leading-relaxed max-w-md mx-auto">
-                        {activePillar === 'Data' ? 'Cleaning, modeling, and dashboards that surface critical patterns and answer business questions with precision.' : 'Designing AI-driven solutions that automate insight generation and increase the reliability of everyday operations.'}
-                      </p>
-                      <div className="mt-12 flex flex-wrap justify-center gap-3">
-                        {(activePillar === 'Data' ? ['Excel', 'SQL', 'Python', 'Power BI', 'Tableau'] : ['LLMs', 'RAG', 'Vector DBs', 'Python APIs', 'Prompt Eng']).map(t => (
-                          <span key={t} className="liquid-glass px-4 py-1.5 rounded-full text-xs font-body text-white/80">{t}</span>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-            </div>
+            <span className="copyright">© {new Date().getFullYear()} Syed Abdul Aman</span>
           </div>
-        </section>
-
-        {/* PROJECTS GRID */}
-        <section id="projects" className="py-32 px-6 bg-black relative">
-          <div className="max-w-screen-xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8">
-              <div>
-                <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white font-body inline-block mb-4">Selected Work</div>
-                <h2 className="text-5xl md:text-6xl font-heading italic text-white tracking-tight leading-[0.9]">Practical GenAI <br/> & Analytics.</h2>
-              </div>
-              <p className="text-white/50 font-body font-light max-w-xs md:text-right">Ask me for live demos, code samples, or walkthroughs of any project.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { title: "AI Resume Builder", tag: "Generative AI", desc: "Generates optimized, tailored resumes by aligning experience with target job descriptions while staying ATS-friendly.", stack: "Python · LLM APIs · Streamlit", link: "https://github.com/P-r-e-m-i-u-m" },
-                { title: "AI Study Notes Generator", tag: "Learning Technology", desc: "Converts long PDFs into concise notes, flashcards, and quiz questions, helping learners revise faster.", stack: "Python · PDF parsing · Embeddings", link: "https://github.com/P-r-e-m-i-u-m" },
-                { title: "API Data Collector", tag: "Automation", desc: "Automates the retrieval, cleaning, and storage of data from multiple APIs, producing analytics-ready tables.", stack: "Python · REST APIs · Scheduling", link: "https://github.com/P-r-e-m-i-u-m" },
-                { title: "Personal Finance Analyzer", tag: "Analytics", desc: "Tracks spending, savings, and patterns across accounts, surfacing insights that support better financial planning.", stack: "Excel / Sheets · Python · Visuals", link: "https://github.com/P-r-e-m-i-u-m" },
-                { title: "Cloud Model Deployment", tag: "MLOps", desc: "Deploys trained AI models behind simple APIs so that other applications can use them reliably at scale.", stack: "Python · FastAPI · Cloud", link: "https://github.com/P-r-e-m-i-u-m" },
-                { title: "AI Business Assistant", tag: "Intelligent Agent", desc: "Custom AI assistant that plugs into Slack/Teams to answer team queries based on internal documentation.", stack: "RAG · LLMs · Python · APIs", link: "https://github.com/P-r-e-m-i-u-m" }
-              ].map((p, i) => (
-                <motion.a key={i} href={p.link} target="_blank" rel="noopener noreferrer" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="liquid-glass-strong rounded-3xl p-8 group flex flex-col hover:-translate-y-2 transition-transform cursor-pointer">
-                  <div className="flex justify-between items-start mb-12">
-                    <div className="liquid-glass px-3 py-1 rounded-full text-[10px] text-white/50 font-bold uppercase tracking-wider">{p.tag}</div>
-                    <div className="w-10 h-10 liquid-glass-strong rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors"><ArrowUpRight className="w-5 h-5" /></div>
-                  </div>
-                  <h3 className="font-heading italic text-3xl text-white mb-4">{p.title}</h3>
-                  <p className="text-white/50 font-body font-light text-sm leading-relaxed mb-8 flex-grow">{p.desc}</p>
-                  <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono"><Terminal className="w-3 h-3" />{p.stack}</div>
-                </motion.a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* STATS SECTION */}
-        <section className="relative py-32 overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <HlsVideo src="https://stream.mux.com/NcU3HlHeF7CUL86azTTzpy3Tlb00d6iF3BmCdFslMJYM.m3u8" className="w-full h-full object-cover" desaturated />
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black" />
-          </div>
-          <div className="relative z-10 max-w-screen-xl mx-auto px-6">
-            <div className="liquid-glass-strong rounded-[3rem] p-12 md:p-20 backdrop-blur-3xl text-center">
-              <div className="mb-16">
-                <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white font-body inline-block mb-4">Snapshot</div>
-                <h2 className="text-4xl md:text-5xl font-heading italic text-white tracking-tight">Analytical Mind. AI Heart.</h2>
-              </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-                {[['15+','Projects Built'],['5+','Core Languages'],['3+','AI Frameworks'],['∞','Problem Solving']].map(([num, label]) => (
-                  <div key={label} className="flex flex-col items-center">
-                    <span className="text-6xl md:text-7xl font-heading italic text-white mb-2">{num}</span>
-                    <span className="text-white/40 font-body font-light text-sm uppercase tracking-widest">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CERTIFICATIONS SECTION */}
-        <section id="certifications" className="py-32 px-6">
-          <div className="max-w-screen-xl mx-auto">
-            <div className="mb-24 text-center">
-              <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white font-body inline-block mb-4">Learning Journey</div>
-              <h2 className="text-5xl md:text-6xl font-heading italic text-white tracking-tight leading-[0.9]">Certificates & Courses</h2>
-              <p className="text-white/50 font-body font-light mt-6 max-w-xl mx-auto">Focused on building practical, project-ready skills in AI, analytics, and engineering.</p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { icon: <Brain className="w-5 h-5" />, title: 'AI & GenAI', items: ["ChatGPT Advanced Course","Introduction to Generative AI","Introduction to GenAI Studio","GenAI Powered Data Analytics","Gemini Certification","Gemini Certified Educator"] },
-                { icon: <Database className="w-5 h-5" />, title: 'Data & Analytics', items: ["Data Analytics (Full Course)","Data Analytics Job Simulation","SQL Certificate","Excel Certificate","Tableau Mastery"] },
-                { icon: <Code className="w-5 h-5" />, title: 'Programming', items: ["Python (Basic Programming)","JavaScript Certificate","TypeScript Certificate","Java Certificate","Cloud Deployment Basics"] },
-              ].map(({ icon, title, items }) => (
-                <div key={title} className="space-y-6">
-                  <h3 className="font-heading italic text-2xl flex items-center gap-3 text-white/80">{icon} {title}</h3>
-                  <div className="space-y-3">
-                    {items.map(c => (
-                      <div key={c} className="liquid-glass p-4 rounded-2xl flex items-center gap-4 group hover:border-white/20 transition-colors">
-                        <Award className="w-5 h-5 text-white/40 group-hover:text-white transition-colors" />
-                        <span className="text-sm font-body font-light text-white/60">{c}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FOOTER */}
-        <footer id="contact" className="relative pt-32 pb-16 px-6 overflow-hidden bg-black">
-          <div className="absolute inset-0 z-0">
-            <HlsVideo src="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8" className="w-full h-full object-cover opacity-50" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-black/20 to-black" />
-          </div>
-          <div className="relative z-10 max-w-screen-xl mx-auto">
-            <div className="text-center mb-32">
-              <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-heading italic text-white tracking-tight leading-[0.8] mb-12">Let's Build <br/> Something.</h2>
-              <p className="text-white/60 font-body font-light text-xl max-w-2xl mx-auto mb-16">I'm open to new projects, roles, and collaborations — especially where data, AI, and automation can create measurable value.</p>
-              <div className="flex flex-wrap justify-center gap-6">
-                <a href="mailto:amanbaba9404522@gmail.com" className="liquid-glass-strong px-8 py-5 rounded-full font-body font-medium text-lg flex items-center gap-3 hover:scale-105 transition-transform group">
-                  <Mail className="w-5 h-5 group-hover:rotate-12 transition-transform" /> amanbaba9404522@gmail.com
-                </a>
-                <a href="tel:+918688822733" className="liquid-glass px-8 py-5 rounded-full font-body font-medium text-lg flex items-center gap-3 hover:scale-105 transition-transform">
-                  <Phone className="w-5 h-5" /> +91 8688822733
-                </a>
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/10 gap-8">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 liquid-glass rounded-full flex items-center justify-center border border-white/20">
-                  <span className="font-heading text-sm italic">S</span>
-                </div>
-                <span className="font-heading italic text-lg tracking-tight">ꜱʏᴇᴅ ᴀʙᴅᴜʟ ᴀᴍᴀɴ</span>
-              </div>
-              <Dock
-                panelHeight={68}
-                baseItemSize={50}
-                magnification={70}
-                items={[
-                  { icon: <Linkedin size={20} />, label: 'LinkedIn', onClick: () => window.open('https://www.linkedin.com/in/syedabdul-aman-genai-developer/', '_blank') },
-                  { icon: <Github size={20} />, label: 'GitHub', onClick: () => window.open('https://github.com/P-r-e-m-i-u-m', '_blank') },
-                  { icon: <ExternalLink size={20} />, label: 'Resume', onClick: () => window.open('/resume.pdf', '_blank') },
-                  { icon: <Mail size={20} />, label: 'Email', onClick: () => window.open('mailto:amanbaba9404522@gmail.com') },
-                ]}
-              />
-              <div className="text-white/20 font-body text-[10px] uppercase tracking-widest">© 2026 Developed with AI & Data</div>
-            </div>
-          </div>
-        </footer>
-
-      </div>
-    </ClickSpark>
+        </div>
+      </footer>
+    </main>
   );
 }
