@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowDown, ArrowRight, ArrowUpRight, Github, Linkedin, Mail, Menu, X, Code2, BrainCircuit, Database, Workflow, Terminal, Sparkles, GitPullRequest, ExternalLink } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Menu, X, Code2, BrainCircuit, Database, Workflow, GitPullRequest } from "lucide-react";
 import { useState } from "react";
 
 const projects = [
