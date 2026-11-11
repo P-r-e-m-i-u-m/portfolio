@@ -2,6 +2,8 @@
 
 A personal portfolio for my work in applied AI, Python engineering, developer tooling, and open source.
 
+[![Portfolio CI](https://github.com/P-r-e-m-i-u-m/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/P-r-e-m-i-u-m/portfolio/actions/workflows/ci.yml)
+
 **Live site:** https://p-r-e-m-i-u-m.github.io/portfolio/
 
 ## What you'll find
@@ -16,10 +18,8 @@ A personal portfolio for my work in applied AI, Python engineering, developer to
 - React 19
 - TypeScript
 - Vite
-- Tailwind CSS 4
 - Lucide icons
 - Custom responsive CSS
-- Framer Motion dependencies retained for future focused interactions
 
 ## Run locally
 
